@@ -1,0 +1,27 @@
+name: Sync fork with upstream
+
+on:
+  schedule:
+    # Check for updates every hour
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync upstream changes
+        run: |
+          git remote add upstream https://github.com/paperclipai/paperclip.git || true
+          git fetch upstream
+          git checkout master
+          git merge upstream/master --no-edit
+          git push origin master
