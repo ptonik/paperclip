@@ -22,6 +22,22 @@ sync_agent() {
   fi
 }
 
+# One-time migration: move workspace dirs from placeholder UUIDs to real UUIDs
+migrate_uuid() {
+  local old="$1"
+  local new="$2"
+  local base="/paperclip/instances/default/workspaces"
+  if [ -d "$base/$old" ] && [ ! -d "$base/$new" ]; then
+    mv "$base/$old" "$base/$new"
+    echo "Migrated workspace $old -> $new"
+  fi
+}
+migrate_uuid "9304728a-4529-4a1b-8c2d-3e4f56789012" "9304728a-4529-4bef-89d9-f8735018bd44"
+migrate_uuid "a6236d17-b1c2-4d3e-8f4a-567890123456" "a6236d17-546d-46f9-9c88-0f895c54119e"
+migrate_uuid "e0a6d5e1-a2b3-4c4d-8e5f-678901234567" "e0a6d5e1-bc0e-466f-a370-9e5bf596f03f"
+migrate_uuid "c751f0f7-b3c4-4d5e-8f6a-789012345678" "c751f0f7-245e-482b-a51d-d9f1df762b83"
+migrate_uuid "84b78904-c4d5-4e6f-8a7b-890123456789" "84b78904-d858-4481-88df-8465f286494b"
+
 # Agent mappings (add new agents here)
 sync_agent "45486bdf-ea1a-47b5-8be9-1e18744ffc66" "ceo"
 sync_agent "21e2e5e9-899f-4854-81c5-a1f043d12159" "head-of-ai"
