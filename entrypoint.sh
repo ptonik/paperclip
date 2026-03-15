@@ -57,6 +57,7 @@ sync_agent "a6236d17-546d-46f9-9c88-0f895c54119e" "innovation-scout"
 sync_agent "e0a6d5e1-bc0e-466f-a370-9e5bf596f03f" "client-success"
 sync_agent "c751f0f7-245e-482b-a51d-d9f1df762b83" "qa-review"
 sync_agent "84b78904-d858-4481-88df-8465f286494b" "competitive-intel"
+sync_agent "9e0f045a-90a0-4bd3-ab5c-6a433a275493" "knowledge-curator"
 
 # Symlink alfred codebase if it exists
 if [ -d "/paperclip/instances/default/workspaces/45486bdf-ea1a-47b5-8be9-1e18744ffc66/alfred" ]; then
