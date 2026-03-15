@@ -8,17 +8,18 @@ if [ ! -f /paperclip/instances/default/config.json ]; then
   gosu node sh -c 'cd /app && node cli/node_modules/tsx/dist/cli.mjs cli/src/index.ts onboard --yes'
 fi
 
-# Sync agent config files from persistent volume to /app/workspace/agents/
-# Map: volume workspace UUID -> agent slug name
+# Symlink agent workspaces from persistent volume to /app/workspace/agents/
+# Using symlinks instead of copying so all reads/writes go directly to the volume
+mkdir -p /app/workspace/agents
 sync_agent() {
   local uuid="$1"
   local slug="$2"
   local src="/paperclip/instances/default/workspaces/$uuid"
   local dst="/app/workspace/agents/$slug"
   if [ -d "$src" ]; then
-    mkdir -p "$dst"
-    cp -r "$src"/* "$dst"/ 2>/dev/null || true
-    echo "Synced $slug ($uuid) -> $dst"
+    rm -rf "$dst" 2>/dev/null || true
+    ln -sf "$src" "$dst"
+    echo "Linked $slug -> $src"
   fi
 }
 
@@ -57,11 +58,10 @@ sync_agent "e0a6d5e1-bc0e-466f-a370-9e5bf596f03f" "client-success"
 sync_agent "c751f0f7-245e-482b-a51d-d9f1df762b83" "qa-review"
 sync_agent "84b78904-d858-4481-88df-8465f286494b" "competitive-intel"
 
-# Sync alfred codebase if it exists
+# Symlink alfred codebase if it exists
 if [ -d "/paperclip/instances/default/workspaces/45486bdf-ea1a-47b5-8be9-1e18744ffc66/alfred" ]; then
-  mkdir -p /app/workspace/alfred
-  cp -r /paperclip/instances/default/workspaces/45486bdf-ea1a-47b5-8be9-1e18744ffc66/alfred/* /app/workspace/alfred/ 2>/dev/null || true
-  echo "Synced Alfred codebase"
+  ln -sf /paperclip/instances/default/workspaces/45486bdf-ea1a-47b5-8be9-1e18744ffc66/alfred /app/workspace/alfred
+  echo "Linked Alfred codebase"
 fi
 
 chown -R node:node /app/workspace
